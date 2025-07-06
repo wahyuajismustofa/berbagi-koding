@@ -1,0 +1,204 @@
+
+=== PENJELASAN PROSES DAN METODE ===
+1. Data dibaca dari file Excel (data-input.xlsx, sheet pertama), lalu kolom numerik dikonversi ke float.
+2. Variabel independen yang digunakan adalah seluruh kolom dummy kategori (Dummy_Date_of_Publication*, Dummy_of_Post_Type*, Dummy_of_Post_Appeal*) dan variabel kontrol Caption_Length serta Public_Holiday.
+3. Semua variabel dummy kategori sudah dalam bentuk 0/1, sehingga tidak perlu mapping atau encoding tambahan.
+4. Model regresi linier berganda dibangun menggunakan metode Ordinary Least Squares (OLS) dari statsmodels, dengan semua variabel dummy dan kontrol dimasukkan sekaligus.
+5. Model dijalankan untuk dua target: LN_Likes dan LN_Comments.
+6. Hasil model (koefisien, p-value, R-squared, dst) ditampilkan dan disimpan ke output.txt.
+7. Analisis variabel paling signifikan dilakukan untuk tiap kelompok variabel (hari, tipe post, post appeal, kontrol).
+
+=== METODE YANG DIGUNAKAN ===
+- Regresi Linier Berganda (Multiple Linear Regression) dengan Ordinary Least Squares (OLS).
+- OLS mencari koefisien regresi yang meminimalkan jumlah kuadrat selisih antara nilai aktual dan prediksi.
+
+=== RUMUS MATEMATIKA ===
+Model regresi linier berganda:
+    Y = β₀ + β₁X₁ + β₂X₂ + ... + βₙXₙ + ε
+Keterangan:
+- Y = variabel dependen (LN_Likes atau LN_Comments)
+- X₁, X₂, ..., Xₙ = variabel independen (seluruh dummy hari, tipe post, post appeal, Caption_Length, Public_Holiday)
+- β₀ = intersep (konstanta)
+- β₁, β₂, ..., βₙ = koefisien regresi
+- ε = error (residual)
+Koefisien β dicari dengan meminimalkan:
+    Σ(Yᵢ - (β₀ + β₁X₁ᵢ + ... + βₙXₙᵢ))²
+
+
+===== MODEL REGRESI: LN_LIKES =====
+                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:               LN_Likes   R-squared:                       0.296
+Model:                            OLS   Adj. R-squared:                  0.273
+Method:                 Least Squares   F-statistic:                     12.98
+Date:                Mon, 07 Jul 2025   Prob (F-statistic):           1.25e-30
+Time:                        04:34:31   Log-Likelihood:                -730.11
+No. Observations:                 544   AIC:                             1496.
+Df Residuals:                     526   BIC:                             1574.
+Df Model:                          17                                         
+Covariance Type:            nonrobust                                         
+======================================================================================================
+                                         coef    std err          t      P>|t|      [0.025      0.975]
+------------------------------------------------------------------------------------------------------
+const                                  3.3252      0.073     45.557      0.000       3.182       3.469
+Dummy_Date_of_Publication_Minggu       0.4145      0.110      3.772      0.000       0.199       0.630
+Dummy_Date_of_Publication_Senin        0.4815      0.103      4.679      0.000       0.279       0.684
+Dummy_Date_of_Publication_Selasa       0.5389      0.110      4.888      0.000       0.322       0.755
+Dummy_Date_of_Publication_Rabu         0.3302      0.126      2.622      0.009       0.083       0.578
+Dummy_Date_of_Publication_Kamis        0.5475      0.092      5.962      0.000       0.367       0.728
+Dummy_Date_of_Publication_Jumat        0.5344      0.096      5.585      0.000       0.346       0.722
+Dummy_Date_of_Publication_Sabtu        0.4783      0.089      5.349      0.000       0.303       0.654
+Dummy_of_Post_Type_Reel                1.3692      0.067     20.436      0.000       1.238       1.501
+Dummy_of_Post_Type_Carousel            0.8609      0.070     12.331      0.000       0.724       0.998
+Dummy_of_Post_Type_Image               1.0951      0.075     14.668      0.000       0.948       1.242
+Dummy_of_Post_Appeal_Appreciation      0.5147      0.491      1.048      0.295      -0.450       1.479
+Dummy_of_Post_Appeal_Channel           0.1725      0.123      1.401      0.162      -0.069       0.414
+Dummy_of_Post_Appeal_Program          -0.6033      0.116     -5.221      0.000      -0.830      -0.376
+Dummy_of_Post_Appeal_Beneficiary      -0.2304      0.113     -2.037      0.042      -0.453      -0.008
+Dummy_of_Post_Appeal_Event             1.9398      0.203      9.577      0.000       1.542       2.338
+Dummy_of_Post_Appeal_Education         0.4138      0.121      3.416      0.001       0.176       0.652
+Dummy_of_Post_Appeal_Occasion          0.6505      0.152      4.283      0.000       0.352       0.949
+Dummy_of_Post_Appeal_Entertainment     0.4676      0.116      4.036      0.000       0.240       0.695
+Caption_Length                     -6.294e-05      0.000     -0.370      0.711      -0.000       0.000
+Public_Holiday                         0.4467      0.152      2.945      0.003       0.149       0.745
+==============================================================================
+Omnibus:                      174.851   Durbin-Watson:                   1.904
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):              634.326
+Skew:                           1.459   Prob(JB):                    1.81e-138
+Kurtosis:                       7.413   Cond. No.                     1.45e+19
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+[2] The smallest eigenvalue is 8.87e-31. This might indicate that there are
+strong multicollinearity problems or that the design matrix is singular.
+
+===== MODEL REGRESI: LN_COMMENTS =====
+                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:            LN_Comments   R-squared:                       0.135
+Model:                            OLS   Adj. R-squared:                  0.107
+Method:                 Least Squares   F-statistic:                     4.828
+Date:                Mon, 07 Jul 2025   Prob (F-statistic):           1.13e-09
+Time:                        04:34:31   Log-Likelihood:                -812.48
+No. Observations:                 544   AIC:                             1661.
+Df Residuals:                     526   BIC:                             1738.
+Df Model:                          17                                         
+Covariance Type:            nonrobust                                         
+======================================================================================================
+                                         coef    std err          t      P>|t|      [0.025      0.975]
+------------------------------------------------------------------------------------------------------
+const                                  0.9971      0.085     11.742      0.000       0.830       1.164
+Dummy_Date_of_Publication_Minggu       0.0424      0.128      0.332      0.740      -0.209       0.294
+Dummy_Date_of_Publication_Senin        0.1952      0.120      1.630      0.104      -0.040       0.430
+Dummy_Date_of_Publication_Selasa       0.1572      0.128      1.225      0.221      -0.095       0.409
+Dummy_Date_of_Publication_Rabu        -0.1518      0.147     -1.036      0.301      -0.440       0.136
+Dummy_Date_of_Publication_Kamis        0.3263      0.107      3.054      0.002       0.116       0.536
+Dummy_Date_of_Publication_Jumat        0.1712      0.111      1.538      0.125      -0.048       0.390
+Dummy_Date_of_Publication_Sabtu        0.2568      0.104      2.468      0.014       0.052       0.461
+Dummy_of_Post_Type_Reel                0.3391      0.078      4.350      0.000       0.186       0.492
+Dummy_of_Post_Type_Carousel            0.4102      0.081      5.050      0.000       0.251       0.570
+Dummy_of_Post_Type_Image               0.2478      0.087      2.853      0.005       0.077       0.418
+Dummy_of_Post_Appeal_Appreciation     -0.8399      0.571     -1.470      0.142      -1.962       0.282
+Dummy_of_Post_Appeal_Channel           0.3335      0.143      2.328      0.020       0.052       0.615
+Dummy_of_Post_Appeal_Program          -0.1266      0.134     -0.942      0.347      -0.391       0.137
+Dummy_of_Post_Appeal_Beneficiary      -0.3895      0.132     -2.959      0.003      -0.648      -0.131
+Dummy_of_Post_Appeal_Event             1.3049      0.236      5.537      0.000       0.842       1.768
+Dummy_of_Post_Appeal_Education         0.3571      0.141      2.534      0.012       0.080       0.634
+Dummy_of_Post_Appeal_Occasion          0.0409      0.177      0.231      0.817      -0.306       0.388
+Dummy_of_Post_Appeal_Entertainment     0.3167      0.135      2.349      0.019       0.052       0.581
+Caption_Length                         0.0002      0.000      0.814      0.416      -0.000       0.001
+Public_Holiday                         0.1480      0.176      0.839      0.402      -0.199       0.495
+==============================================================================
+Omnibus:                      138.577   Durbin-Watson:                   1.390
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):              276.357
+Skew:                           1.415   Prob(JB):                     9.77e-61
+Kurtosis:                       5.046   Cond. No.                     1.45e+19
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+[2] The smallest eigenvalue is 8.87e-31. This might indicate that there are
+strong multicollinearity problems or that the design matrix is singular.
+
+Jumlah data yang dianalisis: 544 baris
+
+=== KESIMPULAN VARIABEL PALING SIGNIFIKAN UNTUK LN_LIKES (dengan variabel kontrol tetap) ===
+Hari: Kamis (p-value: 0.0000, koefisien: 0.5475)
+Tipe Post: Reel (p-value: 0.0000, koefisien: 1.3692)
+Post Appeal: Event (p-value: 0.0000, koefisien: 1.9398)
+Interactivity: Tidak ada yang signifikan (p-value < 0.05)
+
+=== KESIMPULAN VARIABEL PALING SIGNIFIKAN UNTUK LN_COMMENTS (dengan variabel kontrol tetap) ===
+Hari: Kamis (p-value: 0.0024, koefisien: 0.3263)
+Tipe Post: Carousel (p-value: 0.0000, koefisien: 0.4102)
+Post Appeal: Event (p-value: 0.0000, koefisien: 1.3049)
+Interactivity: Tidak ada yang signifikan (p-value < 0.05)
+
+
+=== PENJELASAN TENTANG VARIABEL KONTROL ===
+Pada model regresi linier berganda ini, variabel kontrol seperti Caption_Length, Public_Holiday dimasukkan bersama variabel independen lainnya. Artinya, setiap koefisien yang dihasilkan sudah mencerminkan pengaruh bersih dari masing-masing variabel, setelah memperhitungkan (mengontrol) pengaruh variabel lain yang ada di model. Dengan demikian, pengaruh variabel dummy kategori yang ditampilkan adalah pengaruh parsial, yaitu pengaruh variabel tersebut dengan asumsi variabel kontrol tetap.
+
+
+=== RUMUS REGRESI AKTUAL UNTUK LN_LIKES ===
+LN_Likes = 3.3252 + (0.4145 * Dummy_Date_of_Publication_Minggu) + (0.4815 * Dummy_Date_of_Publication_Senin) + (0.5389 * Dummy_Date_of_Publication_Selasa) + (0.3302 * Dummy_Date_of_Publication_Rabu) + (0.5475 * Dummy_Date_of_Publication_Kamis) + (0.5344 * Dummy_Date_of_Publication_Jumat) + (0.4783 * Dummy_Date_of_Publication_Sabtu) + (1.3692 * Dummy_of_Post_Type_Reel) + (0.8609 * Dummy_of_Post_Type_Carousel) + (1.0951 * Dummy_of_Post_Type_Image) + (0.5147 * Dummy_of_Post_Appeal_Appreciation) + (0.1725 * Dummy_of_Post_Appeal_Channel) + (-0.6033 * Dummy_of_Post_Appeal_Program) + (-0.2304 * Dummy_of_Post_Appeal_Beneficiary) + (1.9398 * Dummy_of_Post_Appeal_Event) + (0.4138 * Dummy_of_Post_Appeal_Education) + (0.6505 * Dummy_of_Post_Appeal_Occasion) + (0.4676 * Dummy_of_Post_Appeal_Entertainment) + (-0.0001 * Caption_Length) + (0.4467 * Public_Holiday) + ε
+
+
+=== RUMUS REGRESI AKTUAL UNTUK LN_COMMENTS ===
+LN_Comments = 0.9971 + (0.0424 * Dummy_Date_of_Publication_Minggu) + (0.1952 * Dummy_Date_of_Publication_Senin) + (0.1572 * Dummy_Date_of_Publication_Selasa) + (-0.1518 * Dummy_Date_of_Publication_Rabu) + (0.3263 * Dummy_Date_of_Publication_Kamis) + (0.1712 * Dummy_Date_of_Publication_Jumat) + (0.2568 * Dummy_Date_of_Publication_Sabtu) + (0.3391 * Dummy_of_Post_Type_Reel) + (0.4102 * Dummy_of_Post_Type_Carousel) + (0.2478 * Dummy_of_Post_Type_Image) + (-0.8399 * Dummy_of_Post_Appeal_Appreciation) + (0.3335 * Dummy_of_Post_Appeal_Channel) + (-0.1266 * Dummy_of_Post_Appeal_Program) + (-0.3895 * Dummy_of_Post_Appeal_Beneficiary) + (1.3049 * Dummy_of_Post_Appeal_Event) + (0.3571 * Dummy_of_Post_Appeal_Education) + (0.0409 * Dummy_of_Post_Appeal_Occasion) + (0.3167 * Dummy_of_Post_Appeal_Entertainment) + (0.0002 * Caption_Length) + (0.1480 * Public_Holiday) + ε
+
+
+
+=== PENJELASAN VARIABEL INDEPENDEN YANG SIGNIFIKAN ===
+- Dummy_Date_of_Publication_Jumat:
+  Pada model LN_Likes, koefisien = 0.5344, p-value = 0.0000. Artinya, jika variabel ini naik 1 satuan (atau berubah dari 0 ke 1 untuk dummy), maka LN_Likes akan berubah sebesar koefisien tersebut, dengan tingkat signifikansi p-value.
+- Dummy_Date_of_Publication_Kamis:
+  Pada model LN_Likes, koefisien = 0.5475, p-value = 0.0000. Artinya, jika variabel ini naik 1 satuan (atau berubah dari 0 ke 1 untuk dummy), maka LN_Likes akan berubah sebesar koefisien tersebut, dengan tingkat signifikansi p-value.
+  Pada model LN_Comments, koefisien = 0.3263, p-value = 0.0024. Artinya, jika variabel ini naik 1 satuan (atau berubah dari 0 ke 1 untuk dummy), maka LN_Comments akan berubah sebesar koefisien tersebut, dengan tingkat signifikansi p-value.
+- Dummy_Date_of_Publication_Minggu:
+  Pada model LN_Likes, koefisien = 0.4145, p-value = 0.0002. Artinya, jika variabel ini naik 1 satuan (atau berubah dari 0 ke 1 untuk dummy), maka LN_Likes akan berubah sebesar koefisien tersebut, dengan tingkat signifikansi p-value.
+- Dummy_Date_of_Publication_Rabu:
+  Pada model LN_Likes, koefisien = 0.3302, p-value = 0.0090. Artinya, jika variabel ini naik 1 satuan (atau berubah dari 0 ke 1 untuk dummy), maka LN_Likes akan berubah sebesar koefisien tersebut, dengan tingkat signifikansi p-value.
+- Dummy_Date_of_Publication_Sabtu:
+  Pada model LN_Likes, koefisien = 0.4783, p-value = 0.0000. Artinya, jika variabel ini naik 1 satuan (atau berubah dari 0 ke 1 untuk dummy), maka LN_Likes akan berubah sebesar koefisien tersebut, dengan tingkat signifikansi p-value.
+  Pada model LN_Comments, koefisien = 0.2568, p-value = 0.0139. Artinya, jika variabel ini naik 1 satuan (atau berubah dari 0 ke 1 untuk dummy), maka LN_Comments akan berubah sebesar koefisien tersebut, dengan tingkat signifikansi p-value.
+- Dummy_Date_of_Publication_Selasa:
+  Pada model LN_Likes, koefisien = 0.5389, p-value = 0.0000. Artinya, jika variabel ini naik 1 satuan (atau berubah dari 0 ke 1 untuk dummy), maka LN_Likes akan berubah sebesar koefisien tersebut, dengan tingkat signifikansi p-value.
+- Dummy_Date_of_Publication_Senin:
+  Pada model LN_Likes, koefisien = 0.4815, p-value = 0.0000. Artinya, jika variabel ini naik 1 satuan (atau berubah dari 0 ke 1 untuk dummy), maka LN_Likes akan berubah sebesar koefisien tersebut, dengan tingkat signifikansi p-value.
+- Dummy_of_Post_Appeal_Beneficiary:
+  Pada model LN_Likes, koefisien = -0.2304, p-value = 0.0421. Artinya, jika variabel ini naik 1 satuan (atau berubah dari 0 ke 1 untuk dummy), maka LN_Likes akan berubah sebesar koefisien tersebut, dengan tingkat signifikansi p-value.
+  Pada model LN_Comments, koefisien = -0.3895, p-value = 0.0032. Artinya, jika variabel ini naik 1 satuan (atau berubah dari 0 ke 1 untuk dummy), maka LN_Comments akan berubah sebesar koefisien tersebut, dengan tingkat signifikansi p-value.
+- Dummy_of_Post_Appeal_Channel:
+  Pada model LN_Comments, koefisien = 0.3335, p-value = 0.0203. Artinya, jika variabel ini naik 1 satuan (atau berubah dari 0 ke 1 untuk dummy), maka LN_Comments akan berubah sebesar koefisien tersebut, dengan tingkat signifikansi p-value.
+- Dummy_of_Post_Appeal_Education:
+  Pada model LN_Likes, koefisien = 0.4138, p-value = 0.0007. Artinya, jika variabel ini naik 1 satuan (atau berubah dari 0 ke 1 untuk dummy), maka LN_Likes akan berubah sebesar koefisien tersebut, dengan tingkat signifikansi p-value.
+  Pada model LN_Comments, koefisien = 0.3571, p-value = 0.0116. Artinya, jika variabel ini naik 1 satuan (atau berubah dari 0 ke 1 untuk dummy), maka LN_Comments akan berubah sebesar koefisien tersebut, dengan tingkat signifikansi p-value.
+- Dummy_of_Post_Appeal_Entertainment:
+  Pada model LN_Likes, koefisien = 0.4676, p-value = 0.0001. Artinya, jika variabel ini naik 1 satuan (atau berubah dari 0 ke 1 untuk dummy), maka LN_Likes akan berubah sebesar koefisien tersebut, dengan tingkat signifikansi p-value.
+  Pada model LN_Comments, koefisien = 0.3167, p-value = 0.0192. Artinya, jika variabel ini naik 1 satuan (atau berubah dari 0 ke 1 untuk dummy), maka LN_Comments akan berubah sebesar koefisien tersebut, dengan tingkat signifikansi p-value.
+- Dummy_of_Post_Appeal_Event:
+  Pada model LN_Likes, koefisien = 1.9398, p-value = 0.0000. Artinya, jika variabel ini naik 1 satuan (atau berubah dari 0 ke 1 untuk dummy), maka LN_Likes akan berubah sebesar koefisien tersebut, dengan tingkat signifikansi p-value.
+  Pada model LN_Comments, koefisien = 1.3049, p-value = 0.0000. Artinya, jika variabel ini naik 1 satuan (atau berubah dari 0 ke 1 untuk dummy), maka LN_Comments akan berubah sebesar koefisien tersebut, dengan tingkat signifikansi p-value.
+- Dummy_of_Post_Appeal_Occasion:
+  Pada model LN_Likes, koefisien = 0.6505, p-value = 0.0000. Artinya, jika variabel ini naik 1 satuan (atau berubah dari 0 ke 1 untuk dummy), maka LN_Likes akan berubah sebesar koefisien tersebut, dengan tingkat signifikansi p-value.
+- Dummy_of_Post_Appeal_Program:
+  Pada model LN_Likes, koefisien = -0.6033, p-value = 0.0000. Artinya, jika variabel ini naik 1 satuan (atau berubah dari 0 ke 1 untuk dummy), maka LN_Likes akan berubah sebesar koefisien tersebut, dengan tingkat signifikansi p-value.
+- Dummy_of_Post_Type_Carousel:
+  Pada model LN_Likes, koefisien = 0.8609, p-value = 0.0000. Artinya, jika variabel ini naik 1 satuan (atau berubah dari 0 ke 1 untuk dummy), maka LN_Likes akan berubah sebesar koefisien tersebut, dengan tingkat signifikansi p-value.
+  Pada model LN_Comments, koefisien = 0.4102, p-value = 0.0000. Artinya, jika variabel ini naik 1 satuan (atau berubah dari 0 ke 1 untuk dummy), maka LN_Comments akan berubah sebesar koefisien tersebut, dengan tingkat signifikansi p-value.
+- Dummy_of_Post_Type_Image:
+  Pada model LN_Likes, koefisien = 1.0951, p-value = 0.0000. Artinya, jika variabel ini naik 1 satuan (atau berubah dari 0 ke 1 untuk dummy), maka LN_Likes akan berubah sebesar koefisien tersebut, dengan tingkat signifikansi p-value.
+  Pada model LN_Comments, koefisien = 0.2478, p-value = 0.0045. Artinya, jika variabel ini naik 1 satuan (atau berubah dari 0 ke 1 untuk dummy), maka LN_Comments akan berubah sebesar koefisien tersebut, dengan tingkat signifikansi p-value.
+- Dummy_of_Post_Type_Reel:
+  Pada model LN_Likes, koefisien = 1.3692, p-value = 0.0000. Artinya, jika variabel ini naik 1 satuan (atau berubah dari 0 ke 1 untuk dummy), maka LN_Likes akan berubah sebesar koefisien tersebut, dengan tingkat signifikansi p-value.
+  Pada model LN_Comments, koefisien = 0.3391, p-value = 0.0000. Artinya, jika variabel ini naik 1 satuan (atau berubah dari 0 ke 1 untuk dummy), maka LN_Comments akan berubah sebesar koefisien tersebut, dengan tingkat signifikansi p-value.
+- Public_Holiday:
+  Pada model LN_Likes, koefisien = 0.4467, p-value = 0.0034. Artinya, jika variabel ini naik 1 satuan (atau berubah dari 0 ke 1 untuk dummy), maka LN_Likes akan berubah sebesar koefisien tersebut, dengan tingkat signifikansi p-value.
+
+Keterangan:
+- Koefisien_LN_Likes: Besarnya pengaruh variabel terhadap LN_Likes (log natural dari Likes).
+- P_Value_LN_Likes: Nilai p-value untuk uji signifikansi pada model LN_Likes. Jika < 0.05, pengaruh signifikan.
+- Koefisien_LN_Comments: Besarnya pengaruh variabel terhadap LN_Comments (log natural dari Comments).
+- P_Value_LN_Comments: Nilai p-value untuk uji signifikansi pada model LN_Comments. Jika < 0.05, pengaruh signifikan.
+- Nilai koefisien positif berarti menaikkan variabel tersebut akan menaikkan engagement, nilai negatif berarti menurunkan engagement.
