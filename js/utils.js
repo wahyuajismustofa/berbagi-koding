@@ -1,4 +1,3 @@
-// utils.js
 (function(global) {
   'use strict';
   
@@ -42,7 +41,7 @@
     });
 
     alert.textContent = message;
-	
+
     const closeBtn = document.createElement('span');
     closeBtn.textContent = '×';
     Object.assign(closeBtn.style, {
@@ -79,7 +78,7 @@
     document.execCommand('copy');
     document.body.removeChild(temp);
   }
-  
+
   function formatDate(date = new Date()) {
     return [
       String(date.getDate()).padStart(2, '0'),
@@ -100,8 +99,8 @@
       timeout = setTimeout(() => fn.apply(this, args), delay);
     };
   }
-  
-  global.utils = {
+
+  const utils = {
     showAlert,
     sleep,
     copyToClipboard,
@@ -109,4 +108,13 @@
     getFormData,
     debounce,
   };
+
+  // Simpan sebagai utils
+  global.utils = utils;
+
+  // Ekspor semua fungsi ke global (window)
+  Object.entries(utils).forEach(([key, value]) => {
+    global[key] = value;
+  });
+
 })(window);
