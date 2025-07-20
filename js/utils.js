@@ -1,6 +1,14 @@
 (function(global) {
-  'use strict';
-  
+   function getBgColor(type) {
+    switch (type) {
+      case 'success': return '#28a745';
+      case 'error':   return '#dc3545';
+      case 'info':    return '#007bff';
+      case 'warning': return '#ffc107';
+      default:        return '#333';
+    }
+  }
+
   function showAlert(message, type = 'info', duration = 3000) {
     const existing = document.querySelector('.alert-wrapper');
     if (existing) existing.remove();
@@ -15,52 +23,64 @@
       zIndex: '9999',
       display: 'flex',
       justifyContent: 'center',
-      pointerEvents: 'none',
       width: '100%',
+      pointerEvents: 'none',
     });
 
     const alert = document.createElement('div');
-    const bg = {
-      success: '#28a745',
-      error: '#dc3545',
-      info: '#007bff',
-      warning: '#ffc107',
-    }[type] || '#333';
-
+    alert.className = `alert alert-${type}`;
     Object.assign(alert.style, {
-      backgroundColor: bg,
-      color: '#fff',
-      padding: '8px 14px',
+      position: 'relative',
+      padding: '5px 30px 5px 10px',
       borderRadius: '6px',
-      fontSize: '14px',
+      fontSize: '12px',
       fontFamily: 'sans-serif',
+      color: '#fff',
+      backgroundColor: getBgColor(type),
       boxShadow: '0 2px 6px rgba(0, 0, 0, 0.2)',
+      opacity: '1',
+      transition: 'opacity 0.3s ease',
       pointerEvents: 'auto',
       maxWidth: '90vw',
-      position: 'relative',
+      textAlign: 'center',
     });
 
-    alert.textContent = message;
+    const messageSpan = document.createElement('span');
+    messageSpan.textContent = message;
+    alert.appendChild(messageSpan);
 
-    const closeBtn = document.createElement('span');
-    closeBtn.textContent = '×';
-    Object.assign(closeBtn.style, {
+    // Tombol X menggunakan <span>
+    const closeSpan = document.createElement('span');
+    closeSpan.innerHTML = '&times;';
+    Object.assign(closeSpan.style, {
       position: 'absolute',
-      top: '2px',
-      right: '10px',
+      top: '0px',
+      right: '6px',
+      fontSize: '12px',
+      fontWeight: 'bold',
+      color: '#fff',
       cursor: 'pointer',
-      fontSize: '18px',
+      lineHeight: '1',
+      padding: '6px',
+      userSelect: 'none',
     });
-    closeBtn.onclick = () => wrapper.remove();
-    alert.appendChild(closeBtn);
 
+    closeSpan.addEventListener('click', () => {
+      alert.style.opacity = '0';
+      setTimeout(() => wrapper.remove(), 300);
+    });
+
+    alert.appendChild(closeSpan);
     wrapper.appendChild(alert);
     document.body.appendChild(wrapper);
 
-    setTimeout(() => {
-      alert.style.opacity = '0';
-      setTimeout(() => wrapper.remove(), 300);
-    }, duration);
+    // Auto-close jika durasi > 0
+    if (duration > 0) {
+      setTimeout(() => {
+        alert.style.opacity = '0';
+        setTimeout(() => wrapper.remove(), 300);
+      }, duration);
+    }
   }
 
   function sleep(ms) {
