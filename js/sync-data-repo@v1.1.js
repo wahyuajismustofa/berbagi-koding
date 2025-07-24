@@ -18,7 +18,6 @@ async function init() {
     config = await fetchJsonData('/config.json');
     repoInfo = config.repository;
 }
-init();
 function cekSync(data) {
   try {
     if (!data.updated) {
@@ -67,7 +66,7 @@ async function sync(data) {
 }
 
   return {
-    cekSync,sync
+    init,cekSync,sync
   };
 
 })();
